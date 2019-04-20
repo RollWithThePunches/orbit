@@ -3,7 +3,7 @@
 
    const orbitData = [
         {rotateZ: -0.01, lightY: -2, cameraZ: 0.5},
-        {rotateZ: 0.0, lightY: 0, cameraZ: 0}
+        {rotateZ: 0.01, lightY: 0, cameraZ: -0.5}
     ];
 
 	const globeContainer = document.getElementById('globe-container');
