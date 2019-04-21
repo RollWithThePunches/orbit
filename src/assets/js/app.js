@@ -1,5 +1,3 @@
-import { ColorKeywords } from "three";
-
 ;(() => {
 
     const orbitData = [
@@ -14,8 +12,8 @@ import { ColorKeywords } from "three";
 	const coneZ = 40;
 
 	const windowHeight = window.innerHeight;
-	let trigger;
-	let triggerCones;
+	let trigger = document.getElementsByClassName('trigger');
+	let triggerCones = document.getElementsByClassName('trigger-cone');
 	
 	// Scene
 	const globeContainer = document.getElementById('globe-container');
@@ -72,11 +70,6 @@ import { ColorKeywords } from "three";
 	// Load image
 	textureLoader.load('assets/img/moon-4k.png', (texture) => {
 
-		// Make texture repeat
-		// May not actually need this
-		// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-		// texture.repeat.set(1, 1);
-
 	 	const material = new THREE.MeshLambertMaterial({
 	 		map: texture
 	 	});
@@ -99,62 +92,57 @@ import { ColorKeywords } from "three";
 	// Change autoRotateSpeed to negative for reverse
 	controls.autoRotateSpeed = -6;
 	
-    // Event handler for moon animations on scroll
-	const animateCamera = () => {
-		const init = () => {
-		    trigger = document.getElementsByClassName('trigger');
-		    addEventHandlers();
-		}
-	    const addEventHandlers = () =>  {
-	    	window.addEventListener('scroll', checkPosition);
-	    	// window.addEventListener('resize', init)
-	  	}
-	  	const checkPosition = () => {
-	    	for (let i = 0; i < trigger.length; i++) {
-	      		let posFromTop = trigger[i].getBoundingClientRect().top
-		      	if (posFromTop - windowHeight <= 0) {
+	// Sphere rotate
+	function sphereRotate() {
+		for (let i = 0; i < trigger.length; i++) {
+			let posFromTop = trigger[i].getBoundingClientRect().top
+				
+			if (posFromTop - windowHeight <= 0) {
 
-					geometry.rotateZ(orbitData[i].rotateZ);
-					light.position.y += orbitData[i].lightY;
-                    camera.position.z += orbitData[i].cameraZ;
-                    console.log(orbitData[i].rotateZ);
-		      	}
-	    	}
-  		}
-		return {
-			init: init
+				geometry.rotateZ(orbitData[i].rotateZ);
+				light.position.y += orbitData[i].lightY;
+				camera.position.z += orbitData[i].cameraZ;
+				console.log(orbitData[i].rotateZ);
+			}
 		}
 	}
-	animateCamera().init();
+	
+	// Cone visibility
+	function coneVisibility() {
+		for (let i = 0; i < triggerCones.length; i++) {
+			let posFromTop = triggerCones[i].getBoundingClientRect().top
+
+		  meshCone.traverse((elem) => {
+			  if (elem instanceof THREE.Mesh) {
+				  if (posFromTop - windowHeight <= 0) {
+					  elem.visible = true;
+				  } else if (posFromTop - windowHeight > 0) {
+					  elem.visible = false;
+				  }
+			  }
+		  });
+	  }
+	}
+
+	// Event handler for moon animations on scroll
+	function animateSphere() {
+			window.addEventListener('scroll', checkPositionSphere);
+			// window.addEventListener('resize', init)
+			function checkPositionSphere() {
+			sphereRotate()
+			}
+	}
+	animateSphere();
 
 	// Event handler for showing cones on scroll
-	const animateCones = () => {
-		const initCones = () => {
-		    triggerCones = document.getElementsByClassName('trigger-cone');
-		    addEventHandlersCones();
-		}
-	    const addEventHandlersCones = () =>  {
-	    	window.addEventListener('scroll', checkPositionCones);
-	  	}
-	  	const checkPositionCones = () => {
-	    	for (let i = 0; i < triggerCones.length; i++) {
-	      		let posFromTop = triggerCones[i].getBoundingClientRect().top
-		      	if (posFromTop - windowHeight <= 0) {
+	function animateCones() {
+	    window.addEventListener('scroll', checkPositionCones);
 
-					meshCone.traverse((elem) => {
-						if (elem instanceof THREE.Mesh) {
-							elem.visible = true;
-						}
-					});
-					
-		      	}
-	    	}
+	  	function checkPositionCones() {
+	    	coneVisibility();
   		}
-		return {
-			initCones: initCones
-		}
 	}
-	animateCones().initCones();
+	animateCones();
 
  	// Render spinning animation function
  	const render = () => {
