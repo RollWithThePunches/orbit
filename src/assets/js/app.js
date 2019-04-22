@@ -8,12 +8,14 @@
 	];
 
 	const coneData = [
-		{coneX: -14, coneY: 16, coneZ: 40},
-		{coneX: -20, coneY: 20, coneZ: 40},
-		{coneX: 0, coneY: 10, coneZ: 40}
+		{coneX: -29, coneY: 0, coneZ: 30},
+		{coneX: -25, coneY: -7, coneZ: 35},
+		{coneX: -28, coneY: 4, coneZ: 30},
+		{coneX: -13, coneY: -8, coneZ: 40}
 	];
 
 	let i;
+	let posFromTop;
 	let cone;
 	let meshLambertCone;
 	let meshCone;
@@ -59,7 +61,6 @@
     // No vertical rotating
     controls.minPolarAngle = Math.PI / 2;
 	controls.maxPolarAngle = Math.PI / 2;
-	
     // Rotation has minimum starting in dark side
     // and maximum from front Moon angle
     controls.minAzimuthAngle = - Math.PI;
@@ -79,7 +80,6 @@
 	 	const material = new THREE.MeshLambertMaterial({
 	 		map: texture
 	 	});
-
 	 	const mesh = new THREE.Mesh(geometry, material);
 	 	scene.add(mesh);
 	 	mesh.rotation.set(-0.08, 4.5, 0);
@@ -101,7 +101,7 @@
 	// Sphere rotate
 	function sphereRotate() {
 		for (i = 0; i < trigger.length; i++) {
-			let posFromTop = trigger[i].getBoundingClientRect().top
+			posFromTop = trigger[i].getBoundingClientRect().top;
 				
 			if (posFromTop - windowHeight <= 0) {
 
@@ -112,11 +112,11 @@
 			}
 		}
 	}
-	
+
 	// Cone visibility
 	function coneVisibility() {
 		for (i = 0; i < triggerCones.length; i++) {
-			let posFromTop = triggerCones[i].getBoundingClientRect().top
+			posFromTop = triggerCones[i].getBoundingClientRect().top
 
 			if (posFromTop - windowHeight <= 0) {
 				meshCone.position.x = coneData[i].coneX;
@@ -127,7 +127,7 @@
 					if (elem instanceof THREE.Mesh) {
 						elem.visible = true;
 					}
-			 	});
+				 });
 			} else if (posFromTop - windowHeight > 0 && coneData[i].coneX == -14) {
 				meshCone.traverse((elem) => {
 					if (elem instanceof THREE.Mesh) {
@@ -139,24 +139,11 @@
 	}
 
 	// Event handler for moon animations on scroll
-	function animateSphere() {
-		window.addEventListener('scroll', checkPositionSphere);
-		// window.addEventListener('resize', init)
-		function checkPositionSphere() {
-		sphereRotate()
-		}
-	}
-	animateSphere();
+	window.addEventListener('scroll', sphereRotate);
+	// window.addEventListener('resize', init)
 
 	// Event handler for showing cones on scroll
-	function animateCones() {
-	    window.addEventListener('scroll', checkPositionCones);
-
-	  	function checkPositionCones() {
-	    	coneVisibility();
-  		}
-	}
-	animateCones();
+	window.addEventListener('scroll', coneVisibility);
 
  	// Render spinning animation function
  	const render = () => {
