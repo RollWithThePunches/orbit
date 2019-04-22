@@ -7,9 +7,16 @@
 		{rotateZ: -0.05, lightY: 0, cameraZ: 0.7},
 	];
 
-	const coneX = -14; 
-	const coneY = 16; 
-	const coneZ = 40;
+	const coneData = [
+		{coneX: -14, coneY: 16, coneZ: 40},
+		{coneX: -20, coneY: 20, coneZ: 40},
+		{coneX: 0, coneY: 10, coneZ: 40}
+	];
+
+	let i;
+	let cone;
+	let meshLambertCone;
+	let meshCone;
 
 	const windowHeight = window.innerHeight;
 	let trigger = document.getElementsByClassName('trigger');
@@ -37,17 +44,16 @@
 	geometry.rotateY(0.25);
 	 
 	// Cone shape
-	const cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
-	const meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
-	const meshCone = new THREE.Mesh(cone, meshLambertCone);
-	scene.add(meshCone);
-
-	meshCone.position.x = coneX;
-	meshCone.geometry.rotateX(Math.PI * 0.5);
-	meshCone.position.y = coneY;
-	meshCone.position.z = coneZ;
-	meshCone.visible = false;
-
+	for (i = 0; i < 20; i++) {
+	
+		cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
+		meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
+		meshCone = new THREE.Mesh(cone, meshLambertCone);
+		scene.add(meshCone);
+		meshCone.geometry.rotateX(Math.PI * 0.5);
+		meshCone.visible = false;
+	}
+	
  	// Camera controls
  	const controls = new THREE.OrbitControls(camera);
     // No vertical rotating
@@ -94,7 +100,7 @@
 	
 	// Sphere rotate
 	function sphereRotate() {
-		for (let i = 0; i < trigger.length; i++) {
+		for (i = 0; i < trigger.length; i++) {
 			let posFromTop = trigger[i].getBoundingClientRect().top
 				
 			if (posFromTop - windowHeight <= 0) {
@@ -109,28 +115,36 @@
 	
 	// Cone visibility
 	function coneVisibility() {
-		for (let i = 0; i < triggerCones.length; i++) {
+		for (i = 0; i < triggerCones.length; i++) {
 			let posFromTop = triggerCones[i].getBoundingClientRect().top
 
-		  meshCone.traverse((elem) => {
-			  if (elem instanceof THREE.Mesh) {
-				  if (posFromTop - windowHeight <= 0) {
-					  elem.visible = true;
-				  } else if (posFromTop - windowHeight > 0) {
-					  elem.visible = false;
-				  }
-			  }
-		  });
-	  }
+			if (posFromTop - windowHeight <= 0) {
+				meshCone.position.x = coneData[i].coneX;
+				meshCone.position.y = coneData[i].coneY;
+				meshCone.position.z = coneData[i].coneZ;
+
+				meshCone.traverse((elem) => {
+					if (elem instanceof THREE.Mesh) {
+						elem.visible = true;
+					}
+			 	});
+			} else if (posFromTop - windowHeight > 0 && coneData[i].coneX == -14) {
+				meshCone.traverse((elem) => {
+					if (elem instanceof THREE.Mesh) {
+						elem.visible = false;
+					}
+				});
+			}
+	  	}
 	}
 
 	// Event handler for moon animations on scroll
 	function animateSphere() {
-			window.addEventListener('scroll', checkPositionSphere);
-			// window.addEventListener('resize', init)
-			function checkPositionSphere() {
-			sphereRotate()
-			}
+		window.addEventListener('scroll', checkPositionSphere);
+		// window.addEventListener('resize', init)
+		function checkPositionSphere() {
+		sphereRotate()
+		}
 	}
 	animateSphere();
 
