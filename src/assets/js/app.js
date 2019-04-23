@@ -1,10 +1,15 @@
 ;(() => {
 
-    const orbitData = [
-        {rotateZ: -0.01, lightY: -2, cameraZ: 0.5},
-		{rotateZ: 0.01, lightY: 0, cameraZ: -0.5},
-		{rotateZ: 0.05, lightY: 7, cameraZ: -0.7},
-		{rotateZ: -0.05, lightY: 0, cameraZ: 0.7}
+    // const orbitData = [
+    //     {rotateZ: -0.01, lightY: -2, cameraZ: 0.5},
+	// 	{rotateZ: 0.01, lightY: 0, cameraZ: -0.5},
+	// 	{rotateZ: 0.05, lightY: 7, cameraZ: -0.7},
+	// 	{rotateZ: -0.05, lightY: 0, cameraZ: 0.7}
+	// ];
+
+	const orbitData = [
+		{cameraZ: 0.01, cameraZReverse: 0.01},
+		{cameraZ: -0.01, cameraZReverse: -0.01}
 	];
 
 	const coneData = [
@@ -23,6 +28,13 @@
 	const windowHeight = window.innerHeight;
 	let trigger = document.getElementsByClassName('trigger');
 	let triggerCones = document.getElementsByClassName('trigger-cone');
+
+	const controller = new ScrollMagic.Controller({
+		vertical: false,
+		globalSceneOptions: {
+			triggerHook: 'onEnter'
+		}
+	});
 	
 	// Scene
 	const globeContainer = document.getElementById('globe-container');
@@ -95,7 +107,7 @@
 	textureLoader.crossOrigin = true;
 
 	// Load image
-	textureLoader.load('assets/moon-4k.png', (texture) => {
+	textureLoader.load('assets/img/moon-4k.png', (texture) => {
 
 	 	const material = new THREE.MeshLambertMaterial({
 	 		map: texture
@@ -117,6 +129,12 @@
 
 	// Change autoRotateSpeed to negative for reverse
 	controls.autoRotateSpeed = -6;
+
+	const group = new THREE.Group();
+	// group.add(geometry);
+	group.add(camera);
+	// group.add(light);
+	scene.add(group);
 	
 	// Sphere rotate
 	function sphereRotate() {
@@ -127,14 +145,15 @@
 			console.log({ i, posFromTop }, posFromTop - windowHeight)
 			if (posFromTop - windowHeight <= 0) {
 
-				geometry.rotateZ(orbitData[i].rotateZ);
-				light.position.y += orbitData[i].lightY;
-				camera.position.z += orbitData[i].cameraZ;
+				// group.rotateZ(orbitData[i].rotateZ);
+				// light.position.y += orbitData[i].lightY;
+				group.rotation.x += orbitData[i].cameraZ;
 				// console.log(orbitData[i].rotateZ);
-			} else if (posFromTop < windowHeight) {
-				geometry.rotateZ(orbitData[i].rotateZ);
-				light.position.y += orbitData[i].lightY;
-				camera.position.z += orbitData[i].cameraZ;
+			// } else if (posFromTop < windowHeight) {
+			// 	// geometry.rotateZ(orbitData[i].rotateZ);
+			// 	// light.position.y += orbitData[i].lightY;
+			// 	// camera.position.z += orbitData[i].cameraZ;
+			// 	group.rotation.z += orbitData[i].cameraZReverse;
 			}
 		}
 
@@ -197,3 +216,5 @@
 // https://stackoverflow.com/questions/25308943/limit-orbitcontrols-horizontal-rotation/25311658#25311658
 // https://stackoverflow.com/questions/37482231/camera-position-changes-in-three-orbitcontrols-in-three-js
 // https://threejs.org/docs/#api/en/math/Quaternion
+// https://github.com/vaneenige/THREE.Phenomenon
+// https://tympanus.net/codrops/2019/03/22/how-to-create-smooth-webgl-transitions-on-scroll-using-phenomenon/
