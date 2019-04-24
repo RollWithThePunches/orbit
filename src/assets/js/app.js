@@ -1,15 +1,9 @@
 ;(() => {
 
-    // const orbitData = [
-    //     {rotateZ: -0.01, lightY: -2, cameraZ: 0.5},
-	// 	{rotateZ: 0.01, lightY: 0, cameraZ: -0.5},
-	// 	{rotateZ: 0.05, lightY: 7, cameraZ: -0.7},
-	// 	{rotateZ: -0.05, lightY: 0, cameraZ: 0.7}
-	// ];
-
-	const orbitData = [
-		{cameraZ: 0.01, cameraZReverse: 0.01},
-		{cameraZ: -0.01, cameraZReverse: -0.01}
+	const moonRotate = [
+		{moonX: 0, moonY: -0.8, moonZ: 0, class: '.trigger1'},
+		{moonX: 0, moonY: -0.5, moonZ: 0, class: '.trigger2'},
+		{moonX: -1.5, moonY: 0, moonZ: -1.5, class: '.trigger5'}
 	];
 
 	const coneData = [
@@ -26,11 +20,9 @@
 	let meshCone;
 
 	const windowHeight = window.innerHeight;
-	let trigger = document.getElementsByClassName('trigger');
 	let triggerCones = document.getElementsByClassName('trigger-cone');
 
 	const controller = new ScrollMagic.Controller({
-		vertical: false,
 		globalSceneOptions: {
 			triggerHook: 'onEnter'
 		}
@@ -45,6 +37,8 @@
 	const camera = new THREE.PerspectiveCamera(
 		55, window.innerWidth / window.innerHeight, 0.1, 1000
 	);
+	camera.position.set(0, 0, -120);
+	camera.lookAt(scene.position.set);
 
 	// Render
 	const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -52,30 +46,19 @@
 	globeContainer.appendChild(renderer.domElement);
 
 	// Sphere
- 	const geometry = new THREE.SphereGeometry(40, 50, 50);
+ 	const moon = new THREE.SphereGeometry(40, 50, 50);
 	THREE.ImageUtils.crossOrigin = true;
-	geometry.rotateZ(-0.3);
-	geometry.rotateY(0.25);
-	 
-	// Cone shape
-	// for (i = 0; i < 4; i++) {
-	
-	// 	cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
-	// 	meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
-	// 	meshCone = new THREE.Mesh(cone, meshLambertCone);
-	// 	scene.add(meshCone);
-	// 	meshCone.geometry.rotateX(Math.PI * 0.5);
-	// 	meshCone.visible = false;
-	// }
+	moon.rotateZ(-0.3);
+	moon.rotateY(0.25);
 
-	var meshCones = coneData.map(function(c) {
-		var cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
-		var meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
-		var meshCone = new THREE.Mesh(cone, meshLambertCone)
+	// Landing site markers
+	const meshCones = coneData.map(function(c) {
 
+		cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
+		meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
+		meshCone = new THREE.Mesh(cone, meshLambertCone)
 		meshCone.geometry.rotateX(Math.PI * 0.5);
 		meshCone.visible = false;
-
 		scene.add(meshCone);
 
 		return {
@@ -83,9 +66,8 @@
 			meshLambertCone: meshLambertCone,
 			meshCone: meshCone,
 		}
-
 	});
-	console.log(meshCones);
+	// console.log(meshCones);
 
 
  	// Camera controls
@@ -95,76 +77,57 @@
 	controls.maxPolarAngle = Math.PI / 2;
     // Rotation has minimum starting in dark side
     // and maximum from front Moon angle
-    controls.minAzimuthAngle = - Math.PI;
+    controls.minAzimuthAngle = Math.PI / 40;
     controls.maxAzimuthAngle = Math.PI / 40;
         
     controls.update();
-	controls.autoRotate = true;
+	// controls.autoRotate = true;
 	controls.enableZoom = false;
 
  	// Use for adding image texture
 	const textureLoader = new THREE.TextureLoader();
 	textureLoader.crossOrigin = true;
-
 	// Load image
 	textureLoader.load('assets/img/moon-4k.png', (texture) => {
 
 	 	const material = new THREE.MeshLambertMaterial({
 	 		map: texture
 	 	});
-	 	const mesh = new THREE.Mesh(geometry, material);
+	 	const mesh = new THREE.Mesh(moon, material);
 	 	scene.add(mesh);
 	 	mesh.rotation.set(-0.08, 4.5, 0);
 
 	 	render();
 	});
 
-	camera.position.set(-0.41, 0, -120);
-	camera.lookAt(scene.position.set);
-
 	// Light
 	const light = color;
- 	light.position.set(10, 0, 25);
+ 	light.position.set(0, 0, 25);
  	scene.add(light);
 
 	// Change autoRotateSpeed to negative for reverse
-	controls.autoRotateSpeed = -6;
+	// controls.autoRotateSpeed = -6;
 
 	const group = new THREE.Group();
-	// group.add(geometry);
 	group.add(camera);
-	// group.add(light);
 	scene.add(group);
-	
-	// Sphere rotate
-	function sphereRotate() {
-		for (i = 0; i < trigger.length; i++) {
-			// console.log(trigger[i],i);
-			posFromTop = trigger[i].getBoundingClientRect().top;
-				
-			console.log({ i, posFromTop }, posFromTop - windowHeight)
-			if (posFromTop - windowHeight <= 0) {
+	// group.add(moon);
+	// group.add(light);
 
-				// group.rotateZ(orbitData[i].rotateZ);
-				// light.position.y += orbitData[i].lightY;
-				group.rotation.x += orbitData[i].cameraZ;
-				// console.log(orbitData[i].rotateZ);
-			// } else if (posFromTop < windowHeight) {
-			// 	// geometry.rotateZ(orbitData[i].rotateZ);
-			// 	// light.position.y += orbitData[i].lightY;
-			// 	// camera.position.z += orbitData[i].cameraZ;
-			// 	group.rotation.z += orbitData[i].cameraZReverse;
-			}
+
+	function rotatingMoon() {
+
+		const introTween = TweenMax.from(group.rotation, 4.5, { y: -3});
+
+		for (i = 0; i < moonRotate.length; i++) {
+			const tween = TweenMax.to(group.rotation, 1, { x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut }, 0.25);
+
+			new ScrollMagic.Scene({
+				triggerElement: moonRotate[i].class
+			})
+			.setTween(tween)
+			.addTo(controller);
 		}
-
-		meshCones.forEach((coneObj) => {
-			const { cone, meshCone } = coneObj
-			meshCone.traverse((elem) => {
-				if (elem instanceof THREE.Mesh) {
-					elem.visible = false;
-				}
-			});
-		});
 	}
 
 	// Cone visibility
@@ -195,10 +158,6 @@
 	  	}
 	}
 
-	// Event handler for moon animations on scroll
-	window.addEventListener('scroll', sphereRotate);
-	// window.addEventListener('resize', init)
-
 	// Event handler for showing cones on scroll
 	window.addEventListener('scroll', coneVisibility);
 
@@ -207,7 +166,10 @@
  		requestAnimationFrame(render);
  		controls.update();
  		renderer.render(scene, camera);
- 	}
+	 }
+
+	 render();
+	 rotatingMoon();
 
 })();
 
@@ -218,3 +180,4 @@
 // https://threejs.org/docs/#api/en/math/Quaternion
 // https://github.com/vaneenige/THREE.Phenomenon
 // https://tympanus.net/codrops/2019/03/22/how-to-create-smooth-webgl-transitions-on-scroll-using-phenomenon/
+// https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another
