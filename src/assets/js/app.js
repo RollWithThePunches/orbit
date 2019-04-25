@@ -3,6 +3,7 @@
 	const moonRotate = [
 		{moonX: 0, moonY: -0.8, moonZ: 0, class: '.trigger1'},
 		{moonX: 0, moonY: -0.5, moonZ: 0, class: '.trigger2'},
+		{moonX: 0, moonY: 0, moonZ: 0, class: '.trigger2'},
 		{moonX: -1.5, moonY: 0, moonZ: -1.5, class: '.trigger5'}
 	];
 
@@ -12,6 +13,10 @@
 		{coneX: -28, coneY: 4, coneZ: 30},
 		{coneX: -13, coneY: -8, coneZ: 40}
 	];
+
+	// const rocket = [
+	// 	{rocketX: 50, rocketY: 0, rocketZ: 0, opacity: 1, class: '.trigger3'}
+	// ];
 
 	let i;
 	let posFromTop;
@@ -44,6 +49,15 @@
 	const renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	globeContainer.appendChild(renderer.domElement);
+
+	const cube = new THREE.BoxGeometry(5, 5, 5);
+	const cubeMaterial = new THREE.MeshNormalMaterial();
+	const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
+	scene.add(cubeMesh);
+
+	cubeMesh.position.z = 500;
+	cubeMesh.position.y = -100;
+	cubeMesh.position.x = -100;
 
 	// Sphere
  	const moon = new THREE.SphereGeometry(40, 50, 50);
@@ -117,7 +131,7 @@
 
 	function rotatingMoon() {
 
-		const introTween = TweenMax.from(group.rotation, 4.5, { y: -3});
+		TweenMax.from(group.rotation, 4.5, { y: -3});
 
 		for (i = 0; i < moonRotate.length; i++) {
 			const tween = TweenMax.to(group.rotation, 1, { x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut }, 0.25);
@@ -128,6 +142,31 @@
 			.setTween(tween)
 			.addTo(controller);
 		}
+	}
+
+	function rocketTravel() {
+		
+			const tween = TweenMax.to(cubeMesh.position, 2, {x: 50, y: 0, z: 0});
+			const tween2 = TweenMax.to(cubeMesh.position, 2, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
+			const tween3 = TweenMax.to(cubeMesh.position, 2, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 40, y: 0, z: 10}] });
+
+			new ScrollMagic.Scene({
+				triggerElement: '.trigger3'
+			})
+			.setTween(tween)
+			.addTo(controller);
+
+			new ScrollMagic.Scene({
+				triggerElement: '.trigger6'
+			})
+			.setTween(tween2)
+			.addTo(controller);
+
+			new ScrollMagic.Scene({
+				triggerElement: '.trigger7'
+			})
+			.setTween(tween3)
+			.addTo(controller);
 	}
 
 	// Cone visibility
@@ -170,6 +209,7 @@
 
 	 render();
 	 rotatingMoon();
+	 rocketTravel();
 
 })();
 
