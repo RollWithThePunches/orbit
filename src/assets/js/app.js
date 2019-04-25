@@ -3,8 +3,9 @@
 	const moonRotate = [
 		{moonX: 0, moonY: -0.8, moonZ: 0, class: '.trigger1'},
 		{moonX: 0, moonY: -0.5, moonZ: 0, class: '.trigger2'},
-		{moonX: 0, moonY: 0, moonZ: 0, class: '.trigger2'},
-		{moonX: -1.5, moonY: 0, moonZ: -1.5, class: '.trigger5'}
+		{moonX: 0, moonY: 0, moonZ: 0, class: '.trigger3'},
+		{moonX: -1.5, moonY: 0, moonZ: -1.5, class: '.trigger5'},
+		{moonX: 0, moonY: 0, moonZ: 0, class: '.trigger7'}
 	];
 
 	const coneData = [
@@ -14,19 +15,15 @@
 		{coneX: -13, coneY: -8, coneZ: 40}
 	];
 
-	// const rocket = [
-	// 	{rocketX: 50, rocketY: 0, rocketZ: 0, opacity: 1, class: '.trigger3'}
-	// ];
-
 	let i;
 	let posFromTop;
 	let cone;
 	let meshLambertCone;
 	let meshCone;
-
 	const windowHeight = window.innerHeight;
 	let triggerCones = document.getElementsByClassName('trigger-cone');
 
+	// Scroll magic controller
 	const controller = new ScrollMagic.Controller({
 		globalSceneOptions: {
 			triggerHook: 'onEnter'
@@ -50,6 +47,7 @@
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	globeContainer.appendChild(renderer.domElement);
 
+	// Cube example
 	const cube = new THREE.BoxGeometry(5, 5, 5);
 	const cubeMaterial = new THREE.MeshNormalMaterial();
 	const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
@@ -59,11 +57,17 @@
 	cubeMesh.position.y = -100;
 	cubeMesh.position.x = -100;
 
-	// Sphere
+	// Moon
  	const moon = new THREE.SphereGeometry(40, 50, 50);
 	THREE.ImageUtils.crossOrigin = true;
 	moon.rotateZ(-0.3);
 	moon.rotateY(0.25);
+
+	// Earth
+	const earth = new THREE.SphereGeometry(90, 50, 50);
+	THREE.ImageUtils.crossOrigin = true;
+	earth.rotateZ(-0.3);
+	earth.rotateY(0.25);
 
 	// Landing site markers
 	const meshCones = coneData.map(function(c) {
@@ -84,7 +88,7 @@
 	// console.log(meshCones);
 
 
- 	// Camera controls
+ 	// Camera controls - Get rid off
  	const controls = new THREE.OrbitControls(camera);
     // No vertical rotating
     controls.minPolarAngle = Math.PI / 2;
@@ -93,10 +97,10 @@
     // and maximum from front Moon angle
     controls.minAzimuthAngle = Math.PI / 40;
     controls.maxAzimuthAngle = Math.PI / 40;
-        
     controls.update();
 	// controls.autoRotate = true;
 	controls.enableZoom = false;
+
 
  	// Use for adding image texture
 	const textureLoader = new THREE.TextureLoader();
@@ -114,6 +118,23 @@
 	 	render();
 	});
 
+	const textureEarth = new THREE.TextureLoader();
+	textureEarth.crossOrigin = true;
+	// Load image
+	textureEarth.load('assets/img/world.topo.bathy.200407.3x5400x2700.jpg', (texture) => {
+
+	 	const material = new THREE.MeshLambertMaterial({
+	 		map: texture
+	 	});
+	 	const mesh = new THREE.Mesh(earth, material);
+	 	scene.add(mesh);
+		mesh.rotation.set(-0.08, 4.5, 0);
+		 
+		mesh.position.y = -150;
+
+	 	render();
+	});
+
 	// Light
 	const light = color;
  	light.position.set(0, 0, 25);
@@ -122,6 +143,7 @@
 	// Change autoRotateSpeed to negative for reverse
 	// controls.autoRotateSpeed = -6;
 
+	// Group
 	const group = new THREE.Group();
 	group.add(camera);
 	scene.add(group);
@@ -133,8 +155,24 @@
 
 		TweenMax.from(group.rotation, 4.5, { y: -3});
 
+		const cameraZoomOut = TweenMax.to(camera.position, 1, {z: 200});
+		// const cameraZoomIn = TweenMax.to(camera.position, 1, {z: -120});
+
+		new ScrollMagic.Scene({
+			triggerElement: '.trigger4'
+		})
+		.setTween(cameraZoomOut)
+		.addTo(controller);
+
+		// new ScrollMagic.Scene({
+		// 	triggerElement: '.trigger7'
+		// })
+		// .setTween(cameraZoomIn)
+		// .addTo(controller);
+
+
 		for (i = 0; i < moonRotate.length; i++) {
-			const tween = TweenMax.to(group.rotation, 1, { x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut }, 0.25);
+			const tween = TweenMax.to(group.rotation, 1, {x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut}, 0.25);
 
 			new ScrollMagic.Scene({
 				triggerElement: moonRotate[i].class
@@ -142,16 +180,17 @@
 			.setTween(tween)
 			.addTo(controller);
 		}
+
 	}
 
 	function rocketTravel() {
 		
-			const tween = TweenMax.to(cubeMesh.position, 2, {x: 50, y: 0, z: 0});
-			const tween2 = TweenMax.to(cubeMesh.position, 2, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
-			const tween3 = TweenMax.to(cubeMesh.position, 2, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 40, y: 0, z: 10}] });
+			const tween = TweenMax.to(cubeMesh.position, 3, {x: 50, y: 0, z: 0});
+			const tween2 = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
+			const tween3 = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
 
 			new ScrollMagic.Scene({
-				triggerElement: '.trigger3'
+				triggerElement: '.trigger4'
 			})
 			.setTween(tween)
 			.addTo(controller);
