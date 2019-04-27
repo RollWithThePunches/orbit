@@ -59,13 +59,11 @@
 
 	// Moon
  	const moon = new THREE.SphereGeometry(40, 50, 50);
-	THREE.ImageUtils.crossOrigin = true;
 	moon.rotateZ(-0.3);
 	moon.rotateY(0.25);
 
 	// Earth
 	const earth = new THREE.SphereGeometry(90, 50, 50);
-	THREE.ImageUtils.crossOrigin = true;
 	earth.rotateZ(-0.3);
 	earth.rotateY(0.25);
 
@@ -82,7 +80,7 @@
 		return {
 			cone: cone,
 			meshLambertCone: meshLambertCone,
-			meshCone: meshCone,
+			meshCone: meshCone
 		}
 	});
 	// console.log(meshCones);
@@ -104,7 +102,7 @@
 
  	// Moon image texture
 	const moonTextureLoader = new THREE.TextureLoader();
-	moonTextureLoader.crossOrigin = true;
+	moonTextureLoader.crossOrigin = true; //Used for CORS
 	moonTextureLoader.load('assets/img/moon-4k-web.jpg', (texture) => {
 
 	 	const material = new THREE.MeshLambertMaterial({
@@ -175,13 +173,11 @@
 		const cameraZoomOutTween = TweenMax.to(camera.position, 1, {z: 200});
 		const cameraZoomInTween = TweenMax.to(camera.position, 1, {z: 100});
 		
-
 		new ScrollMagic.Scene({
 			triggerElement: '.moon-zoom-out'
 		})
 		.setTween(cameraZoomOutTween)
 		.addTo(controller);
-
 
 		// Moon rotation
 		for (i = 0; i < moonRotate.length; i++) {
@@ -199,7 +195,6 @@
 		})
 		.setTween(cameraZoomInTween)
 		.addTo(controller);
-
 
 	}
 
@@ -257,9 +252,6 @@
 	  	}
 	}
 
-	// Event handler for showing cones on scroll
-	window.addEventListener('scroll', coneVisibility);
-
  	// Render spinning animation function
  	const render = () => {
  		requestAnimationFrame(render);
@@ -267,9 +259,18 @@
  		renderer.render(scene, camera);
 	 }
 
+	 function resize() {
+		 camera.aspect = window.innerWidth / window.innerHeight;
+		 camera.updateProjectionMatrix();
+		 renderer.setSize(window.innerWidth, window.innerHeight);
+	 }
+
 	 render();
 	 rotatingMoon();
 	 rocketTravel();
+
+	window.addEventListener('scroll', coneVisibility);
+	window.addEventListener('resize', resize);
 
 })();
 
