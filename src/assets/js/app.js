@@ -23,10 +23,19 @@
 	const windowHeight = window.innerHeight;
 	let triggerCones = document.getElementsByClassName('show-marker');
 
+
+	var mouseTopPerc = 0;
+	function getMousePos() {
+		return (mouseTopPerc * 400) + '100%';
+	}
+	document.body.addEventListener('mousemove', (e) => {
+		mouseTopPerc = e.clientY / this.innerHeight();
+	});
+
 	// Scrollmagic controller
 	const controller = new ScrollMagic.Controller({
 		globalSceneOptions: {
-			triggerHook: 'onEnter'
+			duration: getMousePos
 		}
 	});
 	
@@ -68,7 +77,7 @@
 	earth.rotateY(0.25);
 
 	// Landing site markers
-	const meshCones = coneData.map(function(c) {
+	const meshCones = coneData.map((c) => {
 
 		cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
 		meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
@@ -132,7 +141,7 @@
 		meshEarth.position.z = 100;
 
 		// Make earth rise
-		const earthVisibile = TweenMax.fromTo(meshEarth.position, 1, {y: -300}, {y: -100});
+		const earthVisibile = TweenMax.fromTo(meshEarth.position, 10, {y: -300}, {y: -100});
 		const earthHidden = TweenMax.to(meshEarth.position, 1, {y: -300});
 
 		new ScrollMagic.Scene({
@@ -165,10 +174,33 @@
 	// group.add(moon);
 	// group.add(light);
 
+	var rectangle = document.getElementsByClassName('rect');
+	var rectTween = TweenMax.to(rectangle, 2.5, {rotation: 180});
 
+	new ScrollMagic.Scene({
+		triggerElement: '.moon-rotate_front'
+	})
+	.setTween(rectTween)
+	.addTo(controller);
+
+	// Rotating moon
 	function rotatingMoon() {
 
-		TweenMax.from(group.rotation, 4.5, { y: -3});
+		new ScrollMagic.Scene({
+			triggerElement: '.opening'
+		})
+		.setClassToggle('.canvas', 'fixed')
+		// .addIndicators()
+		.addTo(controller);
+
+		const opening = TweenMax.from(group.rotation, 4.5, { y: -3});
+
+		new ScrollMagic.Scene({
+			triggerElement: globeContainer
+		})
+		.setTween(opening)
+		// .addIndicators()
+		.addTo(controller);
 
 		const cameraZoomOutTween = TweenMax.to(camera.position, 1, {z: 200});
 		const cameraZoomInTween = TweenMax.to(camera.position, 1, {z: 100});
@@ -179,14 +211,15 @@
 		.setTween(cameraZoomOutTween)
 		.addTo(controller);
 
-		// Moon rotation
-		for (i = 0; i < moonRotate.length; i++) {
+		for (i in moonRotate) {
 			const moonRotationTween = TweenMax.to(group.rotation, 1, {x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut}, 0.25);
+			console.log(moonRotationTween);
 
 			new ScrollMagic.Scene({
 				triggerElement: moonRotate[i].class
 			})
 			.setTween(moonRotationTween)
+			.addIndicators()
 			.addTo(controller);
 		}
 

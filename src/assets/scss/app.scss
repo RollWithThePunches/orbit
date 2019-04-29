@@ -88,6 +88,23 @@ canvas {
 	z-index: 20;
 }
 
+.canvas {
+	position: relative;
+}
+
+.fixed {
+	position: fixed;
+	top: 0;
+}
+
+.rect {
+	width: 200px;
+	height: 200px;
+	background: red;
+	position: fixed;
+	z-index: 90;
+}
+
 .marker {
 	width: 100px;
 	height: 100px;
