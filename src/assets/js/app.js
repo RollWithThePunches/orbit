@@ -43,7 +43,6 @@
 	const globeContainer = document.getElementById('globe-container');
 	const scene = new THREE.Scene();
 	const color = new THREE.DirectionalLight(0xFFFFFF);
-	const loader = new THREE.OBJLoader();
 
 	// Camera
 	const camera = new THREE.PerspectiveCamera(
@@ -57,16 +56,6 @@
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	globeContainer.appendChild(renderer.domElement);
 
-	// Cube example
-	// const cube = new THREE.BoxGeometry(5, 5, 5);
-	// const cubeMaterial = new THREE.MeshNormalMaterial();
-	// const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
-	// scene.add(cubeMesh);
-
-	// cubeMesh.position.z = 500;
-	// cubeMesh.position.y = -100;
-	// cubeMesh.position.x = -100;
-
 	// Moon
  	const moon = new THREE.SphereGeometry(40, 50, 50);
 	moon.rotateZ(-0.3);
@@ -76,8 +65,6 @@
 	const earth = new THREE.SphereGeometry(90, 50, 50);
 	earth.rotateZ(-0.3);
 	earth.rotateY(0.25);
-
-
 
 	// Landing site markers
 	const meshCones = coneData.map((c) => {
@@ -167,9 +154,6 @@
  	light.position.set(0, 0, 25);
  	scene.add(light);
 
-	// Change autoRotateSpeed to negative for reverse
-	// controls.autoRotateSpeed = -6;
-
 	// Group
 	const group = new THREE.Group();
 	group.add(camera);
@@ -235,93 +219,101 @@
 	}
 
 	// Rocket
-	loader.load(
-		'assets/img/bottle.obj',
-		(object) => {
-			object.scale.set(0.02, 0.02, 0.02);
-			object.position.z = 500;
-			object.position.y = -100;
-			object.position.x = -100;
-			object.rotateY(20);
-			object.rotateZ(80.5);
-			scene.add(object);
+	function rocket() {
 
-			const rocketRightTween = TweenMax.to(object.position, 3, {x: 50, y: 0, z: 0});
-			const rocketRotateRight = TweenMax.to(object.rotation, 3, {y: 1.2});
-			const rocketBackTween = TweenMax.to(object.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
-			const rocketRotateCenter = TweenMax.to(object.rotation, 3, {y: 5.2});
-			const rocketFrontTween = TweenMax.to(object.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
-			const rocketRotateLeft = TweenMax.to(object.rotation, 3, {y: 8.2});
+		const loader = new THREE.OBJLoader();
+		const loaderObject = new THREE.Group();
 
-			// const timeline = new TimelineLite();
-			// timeline.add(rocketRightTween).add(rocketRotateLeft);
+		loader.load(
+			'assets/img/bottle-reduced.obj',
+			(object) => {
+				object.position.z = 500;
+				object.position.y = -100;
+				object.position.x = -100;
+				object.rotateY(20);
+				object.rotateZ(80.5);
+				scene.add(object);
 
-			new ScrollMagic.Scene({
-				triggerElement: '.rocket-right'
-			})
-			.setTween(rocketRightTween)
-			.addTo(controller);
+				const rocketRightTween = TweenMax.to(object.position, 3, {x: 50, y: 0, z: 0});
+				const rocketRotateRight = TweenMax.to(object.rotation, 3, {y: 1.2});
+				const rocketBackTween = TweenMax.to(object.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
+				const rocketRotateCenter = TweenMax.to(object.rotation, 3, {y: 5.2});
+				const rocketFrontTween = TweenMax.to(object.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
+				const rocketRotateLeft = TweenMax.to(object.rotation, 3, {y: 8.2});
 
-			new ScrollMagic.Scene({
-				triggerElement: '.rocket-right'
-			})
-			.setTween(rocketRotateRight)
-			.addTo(controller);
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-right'
+				})
+				.setTween(rocketRightTween)
+				.addTo(controller);
 
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-right'
+				})
+				.setTween(rocketRotateRight)
+				.addTo(controller);
 
-			new ScrollMagic.Scene({
-				triggerElement: '.rocket-back'
-			})
-			.setTween(rocketBackTween)
-			.addTo(controller);
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-back'
+				})
+				.setTween(rocketBackTween)
+				.addTo(controller);
 
-			new ScrollMagic.Scene({
-				triggerElement: '.rocket-back'
-			})
-			.setTween(rocketRotateCenter)
-			.addTo(controller);
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-back'
+				})
+				.setTween(rocketRotateCenter)
+				.addTo(controller);
 
-			new ScrollMagic.Scene({
-				triggerElement: '.rocket-front'
-			})
-			.setTween(rocketFrontTween)
-			.addTo(controller);
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-front'
+				})
+				.setTween(rocketFrontTween)
+				.addTo(controller);
 
-			new ScrollMagic.Scene({
-				triggerElement: '.rocket-front'
-			})
-			.setTween(rocketRotateLeft)
-			.addTo(controller);
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-front'
+				})
+				.setTween(rocketRotateLeft)
+				.addTo(controller);
 
+			}
+		);
 
-		}
-	);
+		loader.load(
+			'assets/img/bottle-reduced-duplicate.obj',
+			(object) => {
+				object.position.z = 500;
+				object.position.y = -90;
+				object.position.x = -96;
+				object.rotateY(20);
+				object.rotateZ(80.5);
+				scene.add(object);
 
-	// Rocket travel
-	// function rocketTravel() {
-		
-	// 		const rocketLeftTween = TweenMax.to(cubeMesh.position, 3, {x: 50, y: 0, z: 0});
-	// 		const rocketBackTween = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
-	// 		const rocketFrontTween = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
+				const rocketRightTween = TweenMax.to(object.position, 3, {x: 46, y: -4, z: 10});
+				const rocketRotateRight = TweenMax.to(object.rotation, 3, {y: 1.2});
+				const rocketBackTween = TweenMax.to(object.position, 3, {x: 50, y: -100, z: 10});
 
-	// 		new ScrollMagic.Scene({
-	// 			triggerElement: '.rocket-right'
-	// 		})
-	// 		.setTween(rocketLeftTween)
-	// 		.addTo(controller);
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-right'
+				})
+				.setTween(rocketRightTween)
+				.addTo(controller);
 
-	// 		new ScrollMagic.Scene({
-	// 			triggerElement: '.rocket-back'
-	// 		})
-	// 		.setTween(rocketBackTween)
-	// 		.addTo(controller);
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-right'
+				})
+				.setTween(rocketRotateRight)
+				.addTo(controller);
 
-	// 		new ScrollMagic.Scene({
-	// 			triggerElement: '.rocket-front'
-	// 		})
-	// 		.setTween(rocketFrontTween)
-	// 		.addTo(controller);
-	// }
+				new ScrollMagic.Scene({
+					triggerElement: '.rocket-back'
+				})
+				.setTween(rocketBackTween)
+				.addTo(controller);
+			}
+		);
+	}
 
 	// Cone visibility
 	function coneVisibility() {
@@ -366,6 +358,7 @@
 
 	 render();
 	 rotatingMoon();
+	 rocket();
 	//  rocketTravel();
 
 	window.addEventListener('scroll', coneVisibility);
