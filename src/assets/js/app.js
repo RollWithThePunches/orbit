@@ -43,6 +43,7 @@
 	const globeContainer = document.getElementById('globe-container');
 	const scene = new THREE.Scene();
 	const color = new THREE.DirectionalLight(0xFFFFFF);
+	// const loader = new THREE.OBJLoader();
 
 	// Camera
 	const camera = new THREE.PerspectiveCamera(
@@ -75,6 +76,16 @@
 	const earth = new THREE.SphereGeometry(90, 50, 50);
 	earth.rotateZ(-0.3);
 	earth.rotateY(0.25);
+
+	// loader.load(
+	// 	'assets/img/bottle.obj',
+	// 	(object) => {
+	// 		scene.add(object);
+	// 	},
+	// 	(xhr) => {
+	// 		console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+	// 	}
+	// );
 
 	// Landing site markers
 	const meshCones = coneData.map((c) => {
@@ -112,7 +123,7 @@
  	// Moon image texture
 	const moonTextureLoader = new THREE.TextureLoader();
 	moonTextureLoader.crossOrigin = true; //Used for CORS
-	moonTextureLoader.load('assets/img/moon-4k-web.jpg', (texture) => {
+	moonTextureLoader.load('assets/img/moon-4k-web2.jpg', (texture) => {
 
 	 	const material = new THREE.MeshLambertMaterial({
 	 		map: texture
@@ -128,7 +139,7 @@
 	// Earth image texture
 	const earthTextureLoader = new THREE.TextureLoader();
 	earthTextureLoader.crossOrigin = true;
-	earthTextureLoader.load('assets/img/world.topo.bathy.200407.3x5400x2700-web.jpg', (texture) => {
+	earthTextureLoader.load('assets/img/world.topo.bathy.200407.3x5400x2700-web2.jpg', (texture) => {
 
 	 	const material = new THREE.MeshLambertMaterial({
 	 		map: texture
@@ -219,7 +230,7 @@
 				triggerElement: moonRotate[i].class
 			})
 			.setTween(moonRotationTween)
-			.addIndicators()
+			// .addIndicators()
 			.addTo(controller);
 		}
 
