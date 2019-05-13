@@ -22,6 +22,8 @@
 	let meshCone;
 	const windowHeight = window.innerHeight;
 	let triggerCones = document.getElementsByClassName('show-marker');
+	const loader = new THREE.OBJLoader();
+	const mtlLoader = new THREE.MTLLoader();
 
 
 	var mouseTopPerc = 0;
@@ -57,14 +59,44 @@
 	globeContainer.appendChild(renderer.domElement);
 
 	// Moon
- 	const moon = new THREE.SphereGeometry(40, 50, 50);
-	moon.rotateZ(-0.3);
-	moon.rotateY(0.25);
+ 	// const moon = new THREE.SphereGeometry(40, 50, 50);
+	// moon.rotateZ(-0.3);
+	// moon.rotateY(0.25);
 
 	// Earth
 	const earth = new THREE.SphereGeometry(90, 50, 50);
 	earth.rotateZ(-0.3);
 	earth.rotateY(0.25);
+
+	// Moon obj
+	function moonOBJ() {
+
+		mtlLoader
+		.setPath('assets/img/')
+		.load(
+			'Moon-2K.mtl',
+			(materials) => {
+				materials.preload();
+
+				loader
+				.setMaterials(materials)
+				.load(
+					'assets/img/Moon-2K.obj',
+					(object) => {
+						object.scale.set(23, 23, 23);
+						// object.rotateZ(0);
+						// object.rotateY(0);
+						scene.add(object);
+					} 
+				);
+
+			}
+		);
+
+		
+	}
+
+
 
 	// Landing site markers
 	const meshCones = coneData.map((c) => {
@@ -100,19 +132,19 @@
 
 
  	// Moon image texture
-	const moonTextureLoader = new THREE.TextureLoader();
-	moonTextureLoader.crossOrigin = true; //Used for CORS
-	moonTextureLoader.load('assets/img/moon-4k-web2.jpg', (texture) => {
+	// const moonTextureLoader = new THREE.TextureLoader();
+	// moonTextureLoader.crossOrigin = true; //Used for CORS
+	// moonTextureLoader.load('assets/img/moon-4k-web2.jpg', (texture) => {
 
-	 	const material = new THREE.MeshLambertMaterial({
-	 		map: texture
-	 	});
-	 	const mesh = new THREE.Mesh(moon, material);
-	 	scene.add(mesh);
-	 	mesh.rotation.set(-0.08, 4.5, 0);
+	//  	const material = new THREE.MeshLambertMaterial({
+	//  		map: texture
+	//  	});
+	//  	const mesh = new THREE.Mesh(moon, material);
+	//  	scene.add(mesh);
+	//  	mesh.rotation.set(-0.08, 4.5, 0);
 
-	 	render();
-	});
+	//  	render();
+	// });
 
 
 	// Earth image texture
@@ -158,17 +190,7 @@
 	const group = new THREE.Group();
 	group.add(camera);
 	scene.add(group);
-	// group.add(moon);
-	// group.add(light);
 
-	var rectangle = document.getElementsByClassName('rect');
-	var rectTween = TweenMax.to(rectangle, 2.5, {rotation: 180});
-
-	new ScrollMagic.Scene({
-		triggerElement: '.moon-rotate_front'
-	})
-	.setTween(rectTween)
-	.addTo(controller);
 
 	// Rotating moon
 	function rotatingMoon() {
@@ -218,11 +240,57 @@
 
 	}
 
+
+	// Rotating moon
+	// function rotatingMoon() {
+
+	// 	new ScrollMagic.Scene({
+	// 		triggerElement: '.opening'
+	// 	})
+	// 	.setClassToggle('.canvas', 'fixed')
+	// 	// .addIndicators()
+	// 	.addTo(controller);
+
+	// 	const opening = TweenMax.from(group.rotation, 4.5, { y: -3});
+
+	// 	new ScrollMagic.Scene({
+	// 		triggerElement: globeContainer
+	// 	})
+	// 	.setTween(opening)
+	// 	// .addIndicators()
+	// 	.addTo(controller);
+
+	// 	const cameraZoomOutTween = TweenMax.to(camera.position, 1, {z: 200});
+	// 	const cameraZoomInTween = TweenMax.to(camera.position, 1, {z: 100});
+		
+	// 	new ScrollMagic.Scene({
+	// 		triggerElement: '.moon-zoom-out'
+	// 	})
+	// 	.setTween(cameraZoomOutTween)
+	// 	.addTo(controller);
+
+	// 	for (i in moonRotate) {
+	// 		const moonRotationTween = TweenMax.to(group.rotation, 1, {x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut}, 0.25);
+	// 		console.log(moonRotationTween);
+
+	// 		new ScrollMagic.Scene({
+	// 			triggerElement: moonRotate[i].class
+	// 		})
+	// 		.setTween(moonRotationTween)
+	// 		// .addIndicators()
+	// 		.addTo(controller);
+	// 	}
+
+	// 	new ScrollMagic.Scene({
+	// 		triggerElement: '.moon-zoom-in'
+	// 	})
+	// 	.setTween(cameraZoomInTween)
+	// 	.addTo(controller);
+
+	// }
+
 	// Rocket
 	function rocket() {
-
-		const loader = new THREE.OBJLoader();
-		const loaderObject = new THREE.Group();
 
 		loader.load(
 			'assets/img/bottle-reduced.obj',
@@ -357,6 +425,7 @@
 	 }
 
 	 render();
+	 moonOBJ();
 	 rotatingMoon();
 	 rocket();
 	//  rocketTravel();
