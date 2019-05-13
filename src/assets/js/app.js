@@ -246,15 +246,28 @@
 			object.rotateZ(80.5);
 			scene.add(object);
 
-			const rocketLeftTween = TweenMax.to(object.position, 3, {x: 50, y: 0, z: 0});
+			const rocketRightTween = TweenMax.to(object.position, 3, {x: 50, y: 0, z: 0});
+			const rocketRotateRight = TweenMax.to(object.rotation, 3, {y: 1.2});
 			const rocketBackTween = TweenMax.to(object.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
+			const rocketRotateCenter = TweenMax.to(object.rotation, 3, {y: 5.2});
 			const rocketFrontTween = TweenMax.to(object.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
+			const rocketRotateLeft = TweenMax.to(object.rotation, 3, {y: 8.2});
+
+			// const timeline = new TimelineLite();
+			// timeline.add(rocketRightTween).add(rocketRotateLeft);
 
 			new ScrollMagic.Scene({
 				triggerElement: '.rocket-right'
 			})
-			.setTween(rocketLeftTween)
+			.setTween(rocketRightTween)
 			.addTo(controller);
+
+			new ScrollMagic.Scene({
+				triggerElement: '.rocket-right'
+			})
+			.setTween(rocketRotateRight)
+			.addTo(controller);
+
 
 			new ScrollMagic.Scene({
 				triggerElement: '.rocket-back'
@@ -263,9 +276,21 @@
 			.addTo(controller);
 
 			new ScrollMagic.Scene({
+				triggerElement: '.rocket-back'
+			})
+			.setTween(rocketRotateCenter)
+			.addTo(controller);
+
+			new ScrollMagic.Scene({
 				triggerElement: '.rocket-front'
 			})
 			.setTween(rocketFrontTween)
+			.addTo(controller);
+
+			new ScrollMagic.Scene({
+				triggerElement: '.rocket-front'
+			})
+			.setTween(rocketRotateLeft)
 			.addTo(controller);
 
 
