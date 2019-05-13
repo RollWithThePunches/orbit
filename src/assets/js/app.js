@@ -43,7 +43,7 @@
 	const globeContainer = document.getElementById('globe-container');
 	const scene = new THREE.Scene();
 	const color = new THREE.DirectionalLight(0xFFFFFF);
-	// const loader = new THREE.OBJLoader();
+	const loader = new THREE.OBJLoader();
 
 	// Camera
 	const camera = new THREE.PerspectiveCamera(
@@ -58,14 +58,14 @@
 	globeContainer.appendChild(renderer.domElement);
 
 	// Cube example
-	const cube = new THREE.BoxGeometry(5, 5, 5);
-	const cubeMaterial = new THREE.MeshNormalMaterial();
-	const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
-	scene.add(cubeMesh);
+	// const cube = new THREE.BoxGeometry(5, 5, 5);
+	// const cubeMaterial = new THREE.MeshNormalMaterial();
+	// const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
+	// scene.add(cubeMesh);
 
-	cubeMesh.position.z = 500;
-	cubeMesh.position.y = -100;
-	cubeMesh.position.x = -100;
+	// cubeMesh.position.z = 500;
+	// cubeMesh.position.y = -100;
+	// cubeMesh.position.x = -100;
 
 	// Moon
  	const moon = new THREE.SphereGeometry(40, 50, 50);
@@ -77,15 +77,7 @@
 	earth.rotateZ(-0.3);
 	earth.rotateY(0.25);
 
-	// loader.load(
-	// 	'assets/img/bottle.obj',
-	// 	(object) => {
-	// 		scene.add(object);
-	// 	},
-	// 	(xhr) => {
-	// 		console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-	// 	}
-	// );
+
 
 	// Landing site markers
 	const meshCones = coneData.map((c) => {
@@ -242,12 +234,21 @@
 
 	}
 
-	// Rocket travel
-	function rocketTravel() {
-		
-			const rocketLeftTween = TweenMax.to(cubeMesh.position, 3, {x: 50, y: 0, z: 0});
-			const rocketBackTween = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
-			const rocketFrontTween = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
+	// Rocket
+	loader.load(
+		'assets/img/bottle.obj',
+		(object) => {
+			object.scale.set(0.02, 0.02, 0.02);
+			object.position.z = 500;
+			object.position.y = -100;
+			object.position.x = -100;
+			object.rotateY(20);
+			object.rotateZ(80.5);
+			scene.add(object);
+
+			const rocketLeftTween = TweenMax.to(object.position, 3, {x: 50, y: 0, z: 0});
+			const rocketBackTween = TweenMax.to(object.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
+			const rocketFrontTween = TweenMax.to(object.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
 
 			new ScrollMagic.Scene({
 				triggerElement: '.rocket-right'
@@ -266,7 +267,36 @@
 			})
 			.setTween(rocketFrontTween)
 			.addTo(controller);
-	}
+
+
+		}
+	);
+
+	// Rocket travel
+	// function rocketTravel() {
+		
+	// 		const rocketLeftTween = TweenMax.to(cubeMesh.position, 3, {x: 50, y: 0, z: 0});
+	// 		const rocketBackTween = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: 50, y: 0, z: 0}, {x: 0, y: 0, z: -50}, {x: -50, y: 0, z: 0}] });
+	// 		const rocketFrontTween = TweenMax.to(cubeMesh.position, 3, {bezier:[{x: -50, y: 0, z: 0}, {x: 0, y: 0, z: 50}, {x: 20, y: 0, z: 40}] });
+
+	// 		new ScrollMagic.Scene({
+	// 			triggerElement: '.rocket-right'
+	// 		})
+	// 		.setTween(rocketLeftTween)
+	// 		.addTo(controller);
+
+	// 		new ScrollMagic.Scene({
+	// 			triggerElement: '.rocket-back'
+	// 		})
+	// 		.setTween(rocketBackTween)
+	// 		.addTo(controller);
+
+	// 		new ScrollMagic.Scene({
+	// 			triggerElement: '.rocket-front'
+	// 		})
+	// 		.setTween(rocketFrontTween)
+	// 		.addTo(controller);
+	// }
 
 	// Cone visibility
 	function coneVisibility() {
@@ -311,7 +341,7 @@
 
 	 render();
 	 rotatingMoon();
-	 rocketTravel();
+	//  rocketTravel();
 
 	window.addEventListener('scroll', coneVisibility);
 	window.addEventListener('resize', resize);
