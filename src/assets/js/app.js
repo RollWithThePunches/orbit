@@ -205,7 +205,7 @@
 		const opening = TweenMax.from(group.rotation, 4.5, { y: -3});
 
 		new ScrollMagic.Scene({
-			triggerElement: globeContainer
+			triggerElement: '.opening-rotate'
 		})
 		.setTween(opening)
 		// .addIndicators()
