@@ -23,7 +23,7 @@
 	const windowHeight = window.innerHeight;
 	let triggerCones = document.getElementsByClassName('show-marker');
 	const loader = new THREE.OBJLoader();
-	// const mtlLoader = new THREE.MTLLoader();
+	const mtlLoader = new THREE.MTLLoader();
 
 
 	var mouseTopPerc = 0;
@@ -59,9 +59,9 @@
 	globeContainer.appendChild(renderer.domElement);
 
 	// Moon
- 	const moon = new THREE.SphereGeometry(40, 50, 50);
-	moon.rotateZ(-0.3);
-	moon.rotateY(0.25);
+ 	// const moon = new THREE.SphereGeometry(40, 50, 50);
+	// moon.rotateZ(-0.3);
+	// moon.rotateY(0.25);
 
 	// Earth
 	const earth = new THREE.SphereGeometry(90, 50, 50);
@@ -69,31 +69,29 @@
 	earth.rotateY(0.25);
 
 	// Moon obj
-	// function moonOBJ() {
+	function moonOBJ() {
+		mtlLoader
+		.load(
+			'assets/img/Moon-2K-smooth.mtl',
+			(materials) => {
+				materials.preload();
 
-	// 	mtlLoader
-	// 	.load(
-	// 		'assets/img/Moon-2K.mtl',
-	// 		(materials) => {
-	// 			materials.preload();
+				loader.setMaterials(materials)
+				.load(
+					'assets/img/Moon-2K-smooth.obj',
+					(object) => {
+						scene.add(object);
+						object.scale.set(13, 13, 13);	
+						object.rotateX(-1.1);					
+						object.rotateY(2.9);
+						object.rotateZ(2);
+						console.log(object);
+					} 
+				);
+			}
+		);
+	}
 
-	// 			loader
-	// 			.setMaterials(materials)
-	// 			.load(
-	// 				'assets/img/Moon-2K.obj',
-	// 				(object) => {
-	// 					object.scale.set(23, 23, 23);
-	// 					// object.rotateZ(0);
-	// 					// object.rotateY(0);
-	// 					scene.add(object);
-	// 				} 
-	// 			);
-
-	// 		}
-	// 	);
-
-		
-	// }
 
 
 
@@ -131,20 +129,20 @@
 
 
  	// Moon image texture
-	const moonTextureLoader = new THREE.TextureLoader();
-	moonTextureLoader.crossOrigin = true; //Used for CORS
-	moonTextureLoader.load('assets/img/moon-4k-web2.jpg', (texture) => {
+	// const moonTextureLoader = new THREE.TextureLoader();
+	// moonTextureLoader.crossOrigin = true; //Used for CORS
+	// moonTextureLoader.load('assets/img/moon-4k-web2.jpg', (texture) => {
 
-	 	const material = new THREE.MeshLambertMaterial({
-	 		map: texture
-	 	});
-	 	const mesh = new THREE.Mesh(moon, material);
-	 	scene.add(mesh);
-	 	mesh.rotation.set(-0.08, 4.5, 0);
+	//  	const material = new THREE.MeshLambertMaterial({
+	//  		map: texture
+	//  	});
+	//  	const mesh = new THREE.Mesh(moon, material);
+	//  	scene.add(mesh);
+	//  	mesh.rotation.set(-0.08, 4.5, 0);
 
-	 	render();
-	});
-	moonTextureLoader.anisotropy = renderer.capabilities.getMaxAnisotropy();
+	//  	render();
+	// });
+	// moonTextureLoader.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
 
 	// Earth image texture
@@ -425,7 +423,7 @@
 	 }
 
 	 render();
-	//  moonOBJ();
+	 moonOBJ();
 	 rotatingMoon();
 	 rocket();
 	//  rocketTravel();
