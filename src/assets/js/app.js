@@ -22,11 +22,29 @@
 	let meshCone;
 	const windowHeight = window.innerHeight;
 	let triggerCones = document.getElementsByClassName('show-marker');
-	const loader = new THREE.OBJLoader();
-	const mtlLoader = new THREE.MTLLoader();
+	const manager = new THREE.LoadingManager();
 
+	manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+		console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+	};
+	
+	manager.onLoad = function ( ) {
+		console.log( 'Loading complete!');
+	};
+	
+	
+	manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+		console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+	};
+	
+	manager.onError = function ( url ) {
+		console.log( 'There was an error loading ' + url );
+	};
 
-	var mouseTopPerc = 0;
+	const loader = new THREE.OBJLoader(manager);
+	const mtlLoader = new THREE.MTLLoader(manager);
+
+	let mouseTopPerc = 0;
 	function getMousePos() {
 		return (mouseTopPerc * 400) + '100%';
 	}
@@ -71,28 +89,52 @@
 	// Moon obj
 	function moonOBJ() {
 		mtlLoader
+		.setPath('assets/img/moon/')
 		.load(
-			'assets/img/Moon-2K-smooth.mtl',
+			'Moon-2K-smooth.mtl',
 			(materials) => {
 				materials.preload();
 
 				loader.setMaterials(materials)
+				.setPath('assets/img/moon/')
 				.load(
-					'assets/img/Moon-2K-smooth.obj',
+					'Moon-2K-smooth.obj',
 					(object) => {
 						scene.add(object);
 						object.scale.set(13, 13, 13);	
 						object.rotateX(-1.1);					
 						object.rotateY(2.9);
 						object.rotateZ(2);
-						console.log(object);
 					} 
 				);
 			}
 		);
 	}
 
+	// Earth obj
+	// function earthOBJ() {
+	// 	mtlLoader
+	// 	.setPath('assets/img/earth/')
+	// 	.load(
+	// 		'Earth-2K.mtl',
+	// 		(materials) => {
+	// 			materials.preload();
 
+	// 			loader.setMaterials(materials)
+	// 			.setPath('assets/img/earth/')
+	// 			.load(
+	// 				'Earth-2K.obj',
+	// 				(object) => {
+	// 					scene.add(object);
+	// 					object.scale.set(30, 30, 30);
+	// 					object.position.y = -100;						
+	// 					object.rotateY(0.25);
+	// 					object.rotateZ(-0.3);
+	// 				} 
+	// 			);
+	// 		}
+	// 	);
+	// }
 
 
 	// Landing site markers
@@ -349,7 +391,7 @@
 		loader.load(
 			'assets/img/bottle-reduced-duplicate.obj',
 			(object) => {
-				object.position.z = 500;
+				// object.position.z = 500;
 				object.position.y = -90;
 				object.position.x = -96;
 				object.rotateY(20);
@@ -424,6 +466,7 @@
 
 	 render();
 	 moonOBJ();
+	//  earthOBJ();
 	 rotatingMoon();
 	 rocket();
 	//  rocketTravel();
