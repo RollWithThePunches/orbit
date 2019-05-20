@@ -1,5 +1,5 @@
 # Blender MTL File: 'Moon 2K-smooth.blend'
-# Material Count: 1
+# Material Count: 2
 
 newmtl Moon
 Ns 0
@@ -10,4 +10,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_kd moon-diffuse_2K.png
+map_Kd moon-diffuse_2K.png

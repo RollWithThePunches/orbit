@@ -89,14 +89,14 @@
 	// Moon obj
 	function moonOBJ() {
 		mtlLoader
-		.setPath('assets/img/moon/')
+		.setPath('assets/img/obj/')
 		.load(
 			'Moon-2K-smooth.mtl',
 			(materials) => {
 				materials.preload();
 
 				loader.setMaterials(materials)
-				.setPath('assets/img/moon/')
+				.setPath('assets/img/obj/')
 				.load(
 					'Moon-2K-smooth.obj',
 					(object) => {
@@ -112,29 +112,29 @@
 	}
 
 	// Earth obj
-	// function earthOBJ() {
-	// 	mtlLoader
-	// 	.setPath('assets/img/earth/')
-	// 	.load(
-	// 		'Earth-2K.mtl',
-	// 		(materials) => {
-	// 			materials.preload();
+	function earthOBJ() {
+		mtlLoader
+		.setPath('assets/img/obj/')
+		.load(
+			'Earth-2K.mtl',
+			(materials) => {
+				materials.preload();
 
-	// 			loader.setMaterials(materials)
-	// 			.setPath('assets/img/earth/')
-	// 			.load(
-	// 				'Earth-2K.obj',
-	// 				(object) => {
-	// 					scene.add(object);
-	// 					object.scale.set(30, 30, 30);
-	// 					object.position.y = -100;						
-	// 					object.rotateY(0.25);
-	// 					object.rotateZ(-0.3);
-	// 				} 
-	// 			);
-	// 		}
-	// 	);
-	// }
+				loader.setMaterials(materials)
+				.setPath('assets/img/obj/')
+				.load(
+					'Earth-2K.obj',
+					(object) => {
+						scene.add(object);
+						object.scale.set(30, 30, 30);
+						object.position.y = -100;						
+						object.rotateY(0.25);
+						object.rotateZ(-0.3);
+					} 
+				);
+			}
+		);
+	}
 
 
 	// Landing site markers
@@ -466,7 +466,7 @@
 
 	 render();
 	 moonOBJ();
-	//  earthOBJ();
+	 earthOBJ();
 	 rotatingMoon();
 	 rocket();
 	//  rocketTravel();
