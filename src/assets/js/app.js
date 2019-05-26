@@ -4,7 +4,7 @@
 		{moonX: 0, moonY: -0.8, moonZ: 0, class: '.moon-rotate_luna9'},
 		{moonX: 0, moonY: -0.5, moonZ: 0, class: '.moon-rotate_surveyor1'},
 		{moonX: 0, moonY: 0, moonZ: 0, class: '.moon-rotate_front'},
-		{moonX: -1.5, moonY: 0, moonZ: -1.5, class: '.moon-rotate-down'},
+		{moonX: -1.5, moonY: 0, moonZ: 0, class: '.moon-rotate-down'},
 		{moonX: 0, moonY: 0, moonZ: 0, class: '.moon-rotate-up'}
 	];
 
@@ -22,27 +22,29 @@
 	let meshCone;
 	const windowHeight = window.innerHeight;
 	let triggerCones = document.getElementsByClassName('show-marker');
-	const manager = new THREE.LoadingManager();
+	// const manager = new THREE.LoadingManager();
 
-	manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
-		console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-	};
+	// manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+	// 	console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+	// };
 	
-	manager.onLoad = function ( ) {
-		console.log( 'Loading complete!');
-	};
+	// manager.onLoad = function ( ) {
+	// 	console.log( 'Loading complete!');
+	// };
 	
 	
-	manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-		console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-	};
+	// manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+	// 	console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+	// };
 	
-	manager.onError = function ( url ) {
-		console.log( 'There was an error loading ' + url );
-	};
+	// manager.onError = function ( url ) {
+	// 	console.log( 'There was an error loading ' + url );
+	// };
 
-	const loader = new THREE.OBJLoader(manager);
-	const mtlLoader = new THREE.MTLLoader(manager);
+	// const loader = new THREE.OBJLoader(manager);
+	// const mtlLoader = new THREE.MTLLoader(manager);
+	const loader = new THREE.OBJLoader();
+	const mtlLoader = new THREE.MTLLoader();
 
 	let mouseTopPerc = 0;
 	function getMousePos() {
@@ -68,8 +70,9 @@
 	const camera = new THREE.PerspectiveCamera(
 		55, window.innerWidth / window.innerHeight, 0.1, 1000
 	);
-	camera.position.set(0, 0, -120);
-	camera.lookAt(scene.position.set);
+	// camera.position.set(0, 0, -120);
+	// camera.lookAt(scene.position.set);
+	camera.position.z = 100;
 
 	// Render
 	const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -155,21 +158,7 @@
 	});
 	// console.log(meshCones);
 
-
- 	// Camera controls - Get rid of this
- 	const controls = new THREE.OrbitControls(camera);
-    // No vertical rotating
-    controls.minPolarAngle = Math.PI / 2;
-	controls.maxPolarAngle = Math.PI / 2;
-    // Rotation has minimum starting in dark side
-    // and maximum from front Moon angle
-    controls.minAzimuthAngle = Math.PI / 40;
-    controls.maxAzimuthAngle = Math.PI / 40;
-    controls.update();
-	// controls.autoRotate = true;
-	controls.enableZoom = false;
-
-
+	
  	// Moon image texture
 	// const moonTextureLoader = new THREE.TextureLoader();
 	// moonTextureLoader.crossOrigin = true; //Used for CORS
@@ -454,7 +443,6 @@
  	// Render spinning animation function
  	const render = () => {
  		requestAnimationFrame(render);
- 		controls.update();
  		renderer.render(scene, camera);
 	 }
 
