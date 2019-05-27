@@ -68,7 +68,7 @@
 
 	// Camera
 	const camera = new THREE.PerspectiveCamera(
-		55, window.innerWidth / window.innerHeight, 0.1, 1000
+		75, window.innerWidth / window.innerHeight, 0.1, 1000
 	);
 	// camera.position.set(0, 0, -120);
 	// camera.lookAt(scene.position.set);
@@ -115,29 +115,29 @@
 	}
 
 	// Earth obj
-	function earthOBJ() {
-		mtlLoader
-		.setPath('assets/img/obj/')
-		.load(
-			'Earth-2K.mtl',
-			(materials) => {
-				materials.preload();
+	// function earthOBJ() {
+	// 	mtlLoader
+	// 	.setPath('assets/img/obj/')
+	// 	.load(
+	// 		'Earth-2K.mtl',
+	// 		(materials) => {
+	// 			materials.preload();
 
-				loader.setMaterials(materials)
-				.setPath('assets/img/obj/')
-				.load(
-					'Earth-2K.obj',
-					(object) => {
-						scene.add(object);
-						object.scale.set(30, 30, 30);
-						object.position.y = -100;						
-						object.rotateY(0.25);
-						object.rotateZ(-0.3);
-					} 
-				);
-			}
-		);
-	}
+	// 			loader.setMaterials(materials)
+	// 			.setPath('assets/img/obj/')
+	// 			.load(
+	// 				'Earth-2K.obj',
+	// 				(object) => {
+	// 					scene.add(object);
+	// 					object.scale.set(30, 30, 30);
+	// 					object.position.y = -100;						
+	// 					object.rotateY(0.25);
+	// 					object.rotateZ(-0.3);
+	// 				} 
+	// 			);
+	// 		}
+	// 	);
+	// }
 
 
 	// Landing site markers
@@ -454,7 +454,7 @@
 
 	 render();
 	 moonOBJ();
-	 earthOBJ();
+	//  earthOBJ();
 	 rotatingMoon();
 	 rocket();
 	//  rocketTravel();
