@@ -244,7 +244,7 @@
 
 	// Light
 	const light = color;
- 	light.position.set(0, 5, 25);
+ 	light.position.set(0, 0, 25);
  	scene.add(light);
 
 	// Group
