@@ -80,15 +80,19 @@
 	globeContainer.appendChild(renderer.domElement);
 
 	// Moon
- 	// const moon = new THREE.SphereGeometry(40, 50, 50);
+	//  const moon = new THREE.SphereGeometry(40, 50, 50);
+	//  scene.add(moon);
 	// moon.rotateZ(-0.3);
 	// moon.rotateY(0.25);
+
+
+	
 
 	// Earth
 	const earth = new THREE.SphereGeometry(90, 50, 50);
 	earth.rotateZ(-0.3);
 	earth.rotateY(0.25);
-
+	
 	// Moon obj
 	function moonOBJ() {
 		mtlLoader
@@ -115,29 +119,29 @@
 	}
 
 	// Earth obj
-	function earthOBJ() {
-		mtlLoader
-		.setPath('assets/img/obj/')
-		.load(
-			'Earth-2K.mtl',
-			(materials) => {
-				materials.preload();
+	// function earthOBJ() {
+	// 	mtlLoader
+	// 	.setPath('assets/img/obj/')
+	// 	.load(
+	// 		'Earth-2K.mtl',
+	// 		(materials) => {
+	// 			materials.preload();
 
-				loader.setMaterials(materials)
-				.setPath('assets/img/obj/')
-				.load(
-					'Earth-2K.obj',
-					(object) => {
-						scene.add(object);
-						object.scale.set(30, 30, 30);
-						object.position.y = -100;						
-						object.rotateY(0.25);
-						object.rotateZ(-0.3);
-					} 
-				);
-			}
-		);
-	}
+	// 			loader.setMaterials(materials)
+	// 			.setPath('assets/img/obj/')
+	// 			.load(
+	// 				'Earth-2K.obj',
+	// 				(object) => {
+	// 					scene.add(object);
+	// 					object.scale.set(30, 30, 30);
+	// 					object.position.y = -100;						
+	// 					object.rotateY(0.25);
+	// 					object.rotateZ(-0.3);
+	// 				} 
+	// 			);
+	// 		}
+	// 	);
+	// }
 
 
 	// Landing site markers
@@ -191,6 +195,34 @@
 		meshEarth.position.y = -300;
 		meshEarth.position.z = 100;
 
+
+		var customMaterial = new THREE.ShaderMaterial( 
+			{
+				uniforms: 
+				{
+					"c":   { type: "f", value: 0.01 },
+					"p":   { type: "f", value: 6 },
+					glowColor: { type: "c", value: new THREE.Color(0x508dff) },
+					viewVector: { type: "v3", value: camera.position }
+				},
+				vertexShader:   document.getElementById('vertexShader').textContent,
+				fragmentShader: document.getElementById('fragmentShader').textContent,
+				side: THREE.BackSide,
+				blending: THREE.AdditiveBlending,
+				transparent: true
+			}   );
+	
+		var earthAtmosphere = new THREE.Mesh(earth.clone(), customMaterial.clone());
+		earthAtmosphere.position = meshEarth.position;
+		earthAtmosphere.scale.multiplyScalar(1.2);
+		scene.add(earthAtmosphere);
+
+		earthAtmosphere.position.y = -108;
+		earthAtmosphere.position.z = 100;
+		earthAtmosphere.rotateX(11.5);					
+		earthAtmosphere.rotateY(18.9);
+		earthAtmosphere.rotateZ(2);
+
 		// Make earth rise
 		const earthVisibile = TweenMax.fromTo(meshEarth.position, 10, {y: -300}, {y: -100});
 		const earthHidden = TweenMax.to(meshEarth.position, 1, {y: -300});
@@ -212,7 +244,7 @@
 
 	// Light
 	const light = color;
- 	light.position.set(0, 0, 25);
+ 	light.position.set(0, 5, 25);
  	scene.add(light);
 
 	// Group
@@ -454,7 +486,7 @@
 
 	 render();
 	 moonOBJ();
-	 earthOBJ();
+	//  earthOBJ();
 	 rotatingMoon();
 	 rocket();
 	//  rocketTravel();
