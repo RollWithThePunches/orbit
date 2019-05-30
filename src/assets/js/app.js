@@ -20,7 +20,6 @@
 	let cone;
 	let meshLambertCone;
 	let meshCone;
-	const windowHeight = window.innerHeight;
 	let triggerCones = document.getElementsByClassName('show-marker');
 	// const manager = new THREE.LoadingManager();
 
@@ -51,7 +50,7 @@
 		return (mouseTopPerc * 400) + '100%';
 	}
 	document.body.addEventListener('mousemove', (e) => {
-		mouseTopPerc = e.clientY / this.innerHeight();
+		mouseTopPerc = e.clientY / window.innerHeight;
 	});
 
 	// Scrollmagic controller
@@ -79,14 +78,21 @@
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	globeContainer.appendChild(renderer.domElement);
 
+	// Light
+	const light = color;
+	light.position.set(0, 0, 25);
+	scene.add(light);
+
+	// Group
+	const group = new THREE.Group();
+	group.add(camera);
+	scene.add(group);
+
 	// Moon
 	//  const moon = new THREE.SphereGeometry(40, 50, 50);
 	//  scene.add(moon);
 	// moon.rotateZ(-0.3);
 	// moon.rotateY(0.25);
-
-
-	
 
 	// Earth
 	const earth = new THREE.SphereGeometry(90, 50, 50);
@@ -143,23 +149,6 @@
 	// 	);
 	// }
 
-
-	// Landing site markers
-	const meshCones = coneData.map((c) => {
-
-		cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
-		meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
-		meshCone = new THREE.Mesh(cone, meshLambertCone)
-		meshCone.geometry.rotateX(Math.PI * 0.5);
-		meshCone.visible = false;
-		scene.add(meshCone);
-
-		return {
-			cone: cone,
-			meshLambertCone: meshLambertCone,
-			meshCone: meshCone
-		}
-	});
 	// console.log(meshCones);
 
 	
@@ -193,7 +182,7 @@
 		meshEarth.rotation.set(-0.08, 4.5, 0);
 		 
 		meshEarth.position.y = -300;
-		meshEarth.position.z = 100;
+		meshEarth.position.z = 300;
 
 
 		var customMaterial = new THREE.ShaderMaterial( 
@@ -218,7 +207,7 @@
 		scene.add(earthAtmosphere);
 
 		earthAtmosphere.position.y = -108;
-		earthAtmosphere.position.z = 100;
+		earthAtmosphere.position.z = 300;
 		earthAtmosphere.rotateX(11.5);					
 		earthAtmosphere.rotateY(18.9);
 		earthAtmosphere.rotateZ(2);
@@ -242,113 +231,99 @@
 	 	render();
 	});
 
-	// Light
-	const light = color;
- 	light.position.set(0, 0, 25);
- 	scene.add(light);
-
-	// Group
-	const group = new THREE.Group();
-	group.add(camera);
-	scene.add(group);
-
-
 	// Rotating moon
 	function rotatingMoon() {
 
+		// Making canvas sticky
 		new ScrollMagic.Scene({
 			triggerElement: '.opening'
 		})
 		.setClassToggle('.canvas', 'fixed')
-		// .addIndicators()
 		.addTo(controller);
 
+		// Opening camera rotation
 		const opening = TweenMax.from(group.rotation, 4.5, { y: -3});
 
 		new ScrollMagic.Scene({
 			triggerElement: '.opening-rotate'
 		})
 		.setTween(opening)
-		// .addIndicators()
 		.addTo(controller);
 
-		const cameraZoomOutTween = TweenMax.to(camera.position, 1, {z: 200});
+		// Zooming in and out with Earth
+		const cameraZoomOutTween = TweenMax.to(camera.position, 1, {z: 400});
 		const cameraZoomInTween = TweenMax.to(camera.position, 1, {z: 100});
 		
+		// Zoom out
 		new ScrollMagic.Scene({
 			triggerElement: '.moon-zoom-out'
 		})
 		.setTween(cameraZoomOutTween)
 		.addTo(controller);
 
-		for (i in moonRotate) {
-			const moonRotationTween = TweenMax.to(group.rotation, 1, {x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut}, 0.25);
-			console.log(moonRotationTween);
+		// Moon rotation
+		moonRotate.map((moon) => {
+			const moonRotationTween = TweenMax.to(group.rotation, 1, {x: moon.moonX, y: moon.moonY, z: moon.moonZ, ease:Power2.easeOut}, 0.25);
 
 			new ScrollMagic.Scene({
-				triggerElement: moonRotate[i].class
+				triggerElement: moon.class
 			})
 			.setTween(moonRotationTween)
-			// .addIndicators()
 			.addTo(controller);
-		}
+		})
 
+		// Zoom in
 		new ScrollMagic.Scene({
 			triggerElement: '.moon-zoom-in'
 		})
 		.setTween(cameraZoomInTween)
 		.addTo(controller);
-
 	}
 
+	// Landing site markers
+	meshCones = coneData.map((c) => {
 
-	// Rotating moon
-	// function rotatingMoon() {
+		cone = new THREE.CylinderGeometry(1, 0, 10, 50, false);
+		meshLambertCone = new THREE.MeshLambertMaterial({ color: 0x13a31a });
+		meshCone = new THREE.Mesh(cone, meshLambertCone)
+		meshCone.geometry.rotateX(Math.PI * 0.5);
+		meshCone.visible = false;
+		scene.add(meshCone);
 
-	// 	new ScrollMagic.Scene({
-	// 		triggerElement: '.opening'
-	// 	})
-	// 	.setClassToggle('.canvas', 'fixed')
-	// 	// .addIndicators()
-	// 	.addTo(controller);
+		return {
+			cone: cone,
+			meshLambertCone: meshLambertCone,
+			meshCone: meshCone
+		}
+	});
 
-	// 	const opening = TweenMax.from(group.rotation, 4.5, { y: -3});
+	// Animate site markers
+	function coneVisibility() {
+		for (i = 0; i < triggerCones.length; i++) {
+			posFromTop = triggerCones[i].getBoundingClientRect().top;
+			// debugger;
+			let matchingCone = meshCones[i];
+			meshCone = matchingCone.meshCone;
 
-	// 	new ScrollMagic.Scene({
-	// 		triggerElement: globeContainer
-	// 	})
-	// 	.setTween(opening)
-	// 	// .addIndicators()
-	// 	.addTo(controller);
+			if (posFromTop - window.innerHeight <= 0) {
+				meshCone.position.x = coneData[i].coneX;
+				meshCone.position.y = coneData[i].coneY;
+				meshCone.position.z = coneData[i].coneZ;
 
-	// 	const cameraZoomOutTween = TweenMax.to(camera.position, 1, {z: 200});
-	// 	const cameraZoomInTween = TweenMax.to(camera.position, 1, {z: 100});
-		
-	// 	new ScrollMagic.Scene({
-	// 		triggerElement: '.moon-zoom-out'
-	// 	})
-	// 	.setTween(cameraZoomOutTween)
-	// 	.addTo(controller);
-
-	// 	for (i in moonRotate) {
-	// 		const moonRotationTween = TweenMax.to(group.rotation, 1, {x: moonRotate[i].moonX, y: moonRotate[i].moonY, z: moonRotate[i].moonZ, ease:Power2.easeOut}, 0.25);
-	// 		console.log(moonRotationTween);
-
-	// 		new ScrollMagic.Scene({
-	// 			triggerElement: moonRotate[i].class
-	// 		})
-	// 		.setTween(moonRotationTween)
-	// 		// .addIndicators()
-	// 		.addTo(controller);
-	// 	}
-
-	// 	new ScrollMagic.Scene({
-	// 		triggerElement: '.moon-zoom-in'
-	// 	})
-	// 	.setTween(cameraZoomInTween)
-	// 	.addTo(controller);
-
-	// }
+				meshCone.traverse((elem) => {
+					if (elem instanceof THREE.Mesh) {
+						elem.visible = true;
+					}
+				 });
+			} else if (posFromTop - window.innerHeight > 0) {
+				meshCone.traverse((elem) => {
+					if (elem instanceof THREE.Mesh) {
+						elem.visible = false;
+					}
+				});
+			}
+	  	}
+	}
 
 	// Rocket
 	function rocket() {
@@ -444,36 +419,8 @@
 		);
 	}
 
-	// Cone visibility
-	function coneVisibility() {
-		for (i = 0; i < triggerCones.length; i++) {
-			posFromTop = triggerCones[i].getBoundingClientRect().top;
-			// debugger;
-			var matchingCone = meshCones[i];
-			var meshCone = matchingCone.meshCone;
-
-			if (posFromTop - windowHeight <= 0) {
-				meshCone.position.x = coneData[i].coneX;
-				meshCone.position.y = coneData[i].coneY;
-				meshCone.position.z = coneData[i].coneZ;
-
-				meshCone.traverse((elem) => {
-					if (elem instanceof THREE.Mesh) {
-						elem.visible = true;
-					}
-				 });
-			} else if (posFromTop - windowHeight > 0) {
-				meshCone.traverse((elem) => {
-					if (elem instanceof THREE.Mesh) {
-						elem.visible = false;
-					}
-				});
-			}
-	  	}
-	}
-
  	// Render spinning animation function
- 	const render = () => {
+ 	function render() {
  		requestAnimationFrame(render);
  		renderer.render(scene, camera);
 	 }
